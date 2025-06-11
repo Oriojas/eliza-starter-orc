@@ -2,10 +2,10 @@ import { Character, Clients, defaultCharacter, ModelProviderName } from "@elizao
 
 export const character: Character = {
     ...defaultCharacter,
-    // name: "Eliza",
-    // plugins: [],
-    // clients: [],
-    // modelProvider: ModelProviderName.OPENAI,
+    name: "Eliza",
+    plugins: [],
+    clients: [],
+    modelProvider: ModelProviderName.GROQ,
     // settings: {
     //     secrets: {},
     //     voice: {
