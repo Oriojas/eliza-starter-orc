@@ -1,4 +1,4 @@
-# Eliza
+export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm use 22 && export PATH="$HOME/.local/bin:$PATH" && pnpm start# Eliza
 
 ## Character Configuration
 
@@ -90,7 +90,7 @@ export const character: Character = {
     ],
     topics: [
         "Programming",
-        "Software architecture", 
+        "Software architecture",
         "Code review",
         "Debugging techniques"
     ],
@@ -290,7 +290,7 @@ def send_message(agent_id, message, user_id="user123", user_name="User"):
         "userId": user_id,
         "userName": user_name
     }
-    
+
     response = requests.post(url, json=payload)
     if response.status_code == 200:
         return response.json()[0]["text"]
@@ -320,7 +320,7 @@ class ElizaChat:
         self.agent_id = self._get_agent_id()
         self.user_id = "chat_user"
         self.user_name = "User"
-    
+
     def _get_agent_id(self):
         try:
             response = requests.get(f"{self.base_url}/agents")
@@ -329,18 +329,18 @@ class ElizaChat:
         except Exception as e:
             print(f"Error getting agent ID: {e}")
             return None
-    
+
     def send_message(self, message):
         if not self.agent_id:
             return "No agent available"
-        
+
         url = f"{self.base_url}/{self.agent_id}/message"
         payload = {
             "text": message,
             "userId": self.user_id,
             "userName": self.user_name
         }
-        
+
         try:
             response = requests.post(url, json=payload)
             if response.status_code == 200:
@@ -349,18 +349,18 @@ class ElizaChat:
                 return f"Error: {response.status_code}"
         except Exception as e:
             return f"Connection error: {e}"
-    
+
     def chat(self):
         print("🤖 Eliza Chat - Type 'quit' to exit")
         print("=" * 50)
-        
+
         while True:
             user_input = input("\nYou: ").strip()
-            
+
             if user_input.lower() in ['quit', 'exit', 'bye']:
                 print("👋 Goodbye!")
                 break
-            
+
             if user_input:
                 response = self.send_message(user_input)
                 print(f"Eliza: {response}")
@@ -382,25 +382,25 @@ class AsyncElizaClient:
     def __init__(self, base_url="http://localhost:3001"):
         self.base_url = base_url
         self.agent_id = None
-    
+
     async def init(self):
         async with aiohttp.ClientSession() as session:
             async with session.get(f"{self.base_url}/agents") as response:
                 data = await response.json()
                 agents = data.get("agents", [])
                 self.agent_id = agents[0]["id"] if agents else None
-    
+
     async def send_message(self, message, user_id="async_user", user_name="AsyncUser"):
         if not self.agent_id:
             return "No agent available"
-        
+
         url = f"{self.base_url}/{self.agent_id}/message"
         payload = {
             "text": message,
             "userId": user_id,
             "userName": user_name
         }
-        
+
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=payload) as response:
                 if response.status == 200:
@@ -408,7 +408,7 @@ class AsyncElizaClient:
                     return data[0]["text"]
                 else:
                     return f"Error: {response.status}"
-    
+
     async def send_multiple_messages(self, messages):
         tasks = [self.send_message(msg) for msg in messages]
         responses = await asyncio.gather(*tasks)
@@ -418,16 +418,16 @@ class AsyncElizaClient:
 async def main():
     client = AsyncElizaClient()
     await client.init()
-    
+
     messages = [
         "Hello Eliza!",
         "What do you think about AI?",
         "Can you help me with coding?",
         "Tell me a philosophical thought"
     ]
-    
+
     responses = await client.send_multiple_messages(messages)
-    
+
     for msg, response in zip(messages, responses):
         print(f"You: {msg}")
         print(f"Eliza: {response}")
@@ -450,7 +450,7 @@ class RobustElizaClient:
         self.base_url = base_url
         self.max_retries = max_retries
         self.agent_id = self._get_agent_id_with_retry()
-    
+
     def _get_agent_id_with_retry(self) -> Optional[str]:
         for attempt in range(self.max_retries):
             try:
@@ -463,49 +463,49 @@ class RobustElizaClient:
                 if attempt < self.max_retries - 1:
                     time.sleep(2 ** attempt)  # Exponential backoff
         return None
-    
+
     def send_message_with_retry(self, message, user_id="user", user_name="User") -> str:
         if not self.agent_id:
             return "❌ No agent available"
-        
+
         url = f"{self.base_url}/{self.agent_id}/message"
         payload = {
             "text": message,
             "userId": user_id,
             "userName": user_name
         }
-        
+
         for attempt in range(self.max_retries):
             try:
                 response = requests.post(url, json=payload, timeout=30)
                 response.raise_for_status()
-                
+
                 data = response.json()
                 return data[0]["text"]
-                
+
             except requests.exceptions.Timeout:
                 print(f"⏰ Timeout on attempt {attempt + 1}")
             except requests.exceptions.ConnectionError:
                 print(f"🔌 Connection error on attempt {attempt + 1}")
             except Exception as e:
                 print(f"❌ Error on attempt {attempt + 1}: {e}")
-            
+
             if attempt < self.max_retries - 1:
                 time.sleep(2 ** attempt)
-        
+
         return "❌ Failed to get response after all retries"
 
 # Example usage
 if __name__ == "__main__":
     client = RobustElizaClient()
-    
+
     messages = [
         "Hello, how are you?",
         "What's your favorite programming language?",
         "Can you explain machine learning?",
         "Tell me about philosophy"
     ]
-    
+
     for msg in messages:
         print(f"\n💬 You: {msg}")
         response = client.send_message_with_retry(msg)

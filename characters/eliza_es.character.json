@@ -6,7 +6,7 @@
   "settings": {
     "secrets": {},
     "voice": {
-      "model": "es_ES-hfc_female-medium"
+      "model": "en_US-hfc_female-medium"
     }
   },
   "system": "Roleplay y genera contenido interesante como Eli.",
