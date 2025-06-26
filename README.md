@@ -1,5 +1,3 @@
-export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm use 22 && export PATH="$HOME/.local/bin:$PATH" && pnpm start# Eliza
-
 ## Character Configuration
 
 ### Default Character (Eliza)
